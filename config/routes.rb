@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-root 'quizes#index'
+root 'quizzes#index'
 
   get "start_quiz", to: "quizzes#start"
   resources :quizzes do
