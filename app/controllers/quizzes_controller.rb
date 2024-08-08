@@ -5,23 +5,21 @@ class QuizzesController < ApplicationController
   def index
     @quizzes = Quiz.all
 
-    @title = 'These are the quizes'
-    @description = 'Grūti'
+    @title = 'These are the quizzes'
+    @description = 'lorem ipsum'
   end
 
   def start
-
-    @title = 'Start quiz'
-    @description = 'Are you ready?'
+    @title = 'Start some quiz'
+    @description = 'lorem ipsum'
 
     respond_to do |format|
       format.html
       format.json do
-        render json: { title: @title, decription: "Tā ir JSON atbilde" }
+        render json: { title: @title, description: "Šī ir json atbilde" }
       end
     end
   end
-
 
   # GET /quizzes/1 or /quizzes/1.json
   def show
@@ -42,9 +40,13 @@ class QuizzesController < ApplicationController
 
     respond_to do |format|
       if @quiz.save
-        format.html { redirect_to quiz_url(@quiz), notice: "Quiz was successfully created." }
+        format.html do
+          flash.notice = "Quiz was successfully created this time."
+          redirect_to quiz_url(@quiz)
+        end
         format.json { render :show, status: :created, location: @quiz }
       else
+        flash.now.alert = 'Something went wrong'
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @quiz.errors, status: :unprocessable_entity }
       end
