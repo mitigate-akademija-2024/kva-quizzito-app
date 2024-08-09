@@ -17,6 +17,18 @@
     <%= form.text_field :question_text %>
   </div>
 
+  <div>
+    <%= form.label :answers, "Atbildes" %>
+    <% question.answers.each_with_index do |answer, index| %>
+     <div class="mt-2">
+        <%= form.fields_for :answers, answer do |answer_form| %>
+          <%= answer_form.label :answer_text, "Atbilde #{index + 1}" %>
+          <%= answer_form.text_field :answer_text %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
   <div class="mt-4">
     <%= form.submit %>
   </div>

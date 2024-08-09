@@ -10,10 +10,31 @@
   </p>
 
   <h3>Questions</h3>
-  <%= link_to 'Add question', new_quiz_question_path(@quiz) %>
-  <ol>
-    <% quiz.questions.each do |question| %>
-      <li><%= question.question_text %></li>
-    <% end %>
-  </ol>
+ <%= link_to 'Pievienot jautājumu', new_quiz_question_path(@quiz), class: "text-blue-500 hover:text-blue-700" %>
+  
+  <table id="quizzes" class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm mt-4">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Jautajums</th>
+        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Atbilde</th>
+        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Izveidots</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      <% quiz.questions.each do |question| %>
+        <tr>
+          <td class="whitespace-nowrap px-4 py-2 text-gray-900"><%= question.question_text %></td>
+          <td class="whitespace-nowrap px-4 py-2 text-gray-900">
+            <ul class="list-disc list-inside">
+              <% question.answers.each do |answer| %>
+                <li><%= answer.answer_text %></li>
+              <% end %>
+            </ul>
+          </td>
+          <td class="whitespace-nowrap px-4 py-2 text-gray-900 text-centre"><%= question.created_at.strftime("%B %d, %Y") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
 </div>
