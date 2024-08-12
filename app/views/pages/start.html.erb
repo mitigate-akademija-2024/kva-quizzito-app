@@ -1,4 +1,5 @@
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
+
   <h1 class="text-4xl font-bold mb-8">Welcome to Kva Quizzito</h1>
 
   <div class="flex flex-wrap justify-between space-x-4">
@@ -19,5 +20,12 @@
       <h2 class="text-2xl font-semibold mb-4">Highscores</h2>
       <%= link_to 'View Highscores', highscores_path, class: "bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200" %>
     </div>
+
+    <!-- Create new Quiz Link -->
+    <div class="p-6 bg-teal-500 text-white rounded-lg shadow-lg flex-grow">
+      <h2 class="text-2xl font-semibold mb-4">Highscores</h2>
+      <%= link_to 'Create a new quiz!', highscores_path, class: "bg-white text-teal-500 px-4 py-2 rounded hover:bg-gray-200" %>
+    </div>
   </div>
+
 </div>

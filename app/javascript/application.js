@@ -3,3 +3,4 @@ import "@hotwired/turbo-rails"
 import "./controllers"
 // Import the nested form JavaScript
 import "./nested_form"
+

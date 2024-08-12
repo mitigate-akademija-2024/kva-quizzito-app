@@ -12,7 +12,7 @@
   <body class="bg-gray-100">
     <!-- Navigation Bar -->
 
-    <nav class="bg-blue-600 p-4">
+    <nav class="bg-blue-600 p-4 shadow-lg fixed top-0 left-0 w-full z-10">
   <div class="container mx-auto flex justify-between items-center">
     <ul class="flex space-x-4 text-white">
       <li><%= link_to 'Home', root_path, class: "hover:underline" %></li>
@@ -22,6 +22,7 @@
     </ul>
     <ul class="flex space-x-4 text-white">
       <% if user_signed_in? %>
+        <li><%= link_to 'Profile', user_profile_path, class: "hover:underline" %></li>
         <li><%= link_to 'Logout', destroy_user_session_path, method: :delete, class: "hover:underline" %></li>
       <% else %>
         <li><%= link_to 'Login', new_user_session_path, class: "hover:underline" %></li>

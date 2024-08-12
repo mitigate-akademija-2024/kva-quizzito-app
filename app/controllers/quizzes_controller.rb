@@ -1,4 +1,7 @@
 class QuizzesController < ApplicationController
+
+  skip_before_action :authenticate_user!, only: [:index, :show]
+  
   before_action :authenticate_user!
   before_action :set_quiz, only: [:show, :edit, :update, :destroy]
 
@@ -8,28 +11,34 @@ class QuizzesController < ApplicationController
 
   def show
     @quiz = Quiz.find(params[:id])
+    @questions = @quiz.questions  
   end
 
   def new
     @quiz = current_user.quizzes.build
     @quiz.questions.build # Initialize at least one question
+    4.times { question.answers.build } # Initialize with 4 empty answers
+
   end
 
   def create
     @quiz = current_user.quizzes.build(quiz_params)
     if @quiz.save
-      redirect_to @quiz, notice: 'Quiz was successfully created.'
+      redirect_to my_quizzes_path, notice: 'Quiz was successfully created.'
     else
       render :new
     end
   end # <-- This 'end' was missing
 
   def edit
+    @quiz = current_user.quizzes.find(params[:id])
+
   end
 
   def update
+    @quiz = current_user.quizzes.find(params[:id])
     if @quiz.update(quiz_params)
-      redirect_to @quiz, notice: 'Quiz was successfully updated.'
+      redirect_to my_quizzes_path, notice: 'Quiz was successfully updated.'
     else
       render :edit
     end
@@ -42,13 +51,16 @@ class QuizzesController < ApplicationController
 
   def submit_answers
     @quiz = Quiz.find(params[:quiz_id])
-
+  
     if params[:answers].blank?
       redirect_to quiz_path(@quiz), alert: 'You must select an answer for each question before saving.'
       return
     end
-
+  
+    correct_answers_count = 0
+  
     params[:answers].each do |question_id, answer_id|
+      question = Question.find(question_id)
       user_answer = current_user.user_answers.find_or_initialize_by(
         question_id: question_id,
         user_id: current_user.id
@@ -56,14 +68,18 @@ class QuizzesController < ApplicationController
       user_answer.answer_id = answer_id
       user_answer.draft = params[:finalize].blank?
       user_answer.save
+  
+      correct_answers_count += 1 if question.correct_answer_id == answer_id.to_i
     end
-
+  
     if params[:finalize].present?
+      current_user.scores.create(quiz: @quiz, score: correct_answers_count)
       redirect_to results_quiz_path(@quiz), notice: 'Your answers have been submitted successfully.'
     else
       redirect_to review_quiz_path(@quiz), notice: 'Your answers have been saved. You can review them before final submission.'
     end
   end
+
 
   def results
     @quiz = Quiz.find(params[:id])
@@ -94,6 +110,10 @@ class QuizzesController < ApplicationController
   end
 
   def quiz_params
-    params.require(:quiz).permit(:title, :description, questions_attributes: [:id, :question_text, :_destroy])
+    params.require(:quiz).permit(:title, :description, questions_attributes: [
+      :id, :question_text, :_destroy,
+      answers_attributes: [:id, :answer_text, :correct, :_destroy]
+    ])
   end
+  
 end

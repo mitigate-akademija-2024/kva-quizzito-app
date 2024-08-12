@@ -1,4 +1,4 @@
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
   <h1 class="text-4xl font-bold mb-8">My Quizzes</h1>
 
   <% if @quizzes.any? %>
@@ -7,9 +7,17 @@
         <li>
           <%= link_to quiz.title, quiz_path(quiz), class: "text-blue-500 underline" %>
         </li>
+        <div>
+    <h2><%= quiz.title %></h2>
+    <p><%= quiz.description %></p>
+    <%= link_to 'Edit', edit_quiz_path(quiz), class: "btn btn-primary" %>
+    <%= link_to 'Delete', quiz, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+  </div>
       <% end %>
     </ul>
   <% else %>
     <p>You haven't created any quizzes yet. <%= link_to 'Create a new quiz', new_quiz_path, class: "text-blue-500 underline" %></p>
   <% end %>
+  
+
 </div>
