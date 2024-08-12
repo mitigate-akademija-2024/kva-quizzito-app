@@ -6,5 +6,6 @@ class CreateQuizzes < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
+    add_reference :users
   end
 end

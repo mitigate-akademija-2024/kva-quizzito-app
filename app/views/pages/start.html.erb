@@ -1,0 +1,23 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold mb-8">Welcome to Kva Quizzito</h1>
+
+  <div class="flex flex-wrap justify-between space-x-4">
+    <!-- Quiz List Link -->
+    <div class="p-6 bg-green-500 text-white rounded-lg shadow-lg flex-grow">
+      <h2 class="text-2xl font-semibold mb-4">Quiz List</h2>
+      <%= link_to 'Browse Quizzes', quizzes_path, class: "bg-white text-green-500 px-4 py-2 rounded hover:bg-gray-200" %>
+    </div>
+
+    <!-- My Quizzes Link -->
+    <div class="p-6 bg-purple-500 text-white rounded-lg shadow-lg flex-grow">
+      <h2 class="text-2xl font-semibold mb-4">My Quizzes</h2>
+      <%= link_to 'Manage My Quizzes', my_quizzes_path, class: "bg-white text-purple-500 px-4 py-2 rounded hover:bg-gray-200" %>
+    </div>
+
+    <!-- Highscores Link -->
+    <div class="p-6 bg-blue-500 text-white rounded-lg shadow-lg flex-grow">
+      <h2 class="text-2xl font-semibold mb-4">Highscores</h2>
+      <%= link_to 'View Highscores', highscores_path, class: "bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200" %>
+    </div>
+  </div>
+</div>

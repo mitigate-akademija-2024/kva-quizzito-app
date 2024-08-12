@@ -1,35 +1,10 @@
-
-<%= form_with(model: [question.quiz, question]) do |form| %>
-  <% if question.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(question.errors.count, "error") %> prohibited this question from being saved:</h2>
-
-      <ul>
-        <% question.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div>
-    <%= form.label :question_text %>
-    <%= form.text_field :question_text %>
+<%= form_with(model: [@quiz, @question], local: true) do |form| %>
+  <div class="mb-4">
+    <%= form.label :question_text, class: "block text-lg font-medium text-gray-700" %>
+    <%= form.text_field :question_text, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
   </div>
 
-  <div>
-    <%= form.label :answers, "Atbildes" %>
-    <% question.answers.each_with_index do |answer, index| %>
-     <div class="mt-2">
-        <%= form.fields_for :answers, answer do |answer_form| %>
-          <%= answer_form.label :answer_text, "Atbilde #{index + 1}" %>
-          <%= answer_form.text_field :answer_text %>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-
-  <div class="mt-4">
-    <%= form.submit %>
+  <div class="mt-6">
+    <%= form.submit class: "bg-blue-500 text-white px-4 py-2 rounded" %>
   </div>
 <% end %>

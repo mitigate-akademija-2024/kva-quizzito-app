@@ -1,9 +1,48 @@
+<h1 class="text-3xl font-bold mb-4"><%= @quiz.title %></h1>
+<p class="text-lg text-gray-700"><%= @quiz.description %></p>
 
-<%= render @quiz %>
+<h2 class="text-2xl font-semibold mt-8">Questions</h2>
+<ul>
+  <% @quiz.questions.each do |question| %>
+    <li class="mt-6">
+      <div class="mb-2">
+        <p class="text-xl"><%= question.question_text %></p>
+      </div>
 
-<div>
-  <%= link_to "Edit this quiz", edit_quiz_path(@quiz) %> |
-  <%= link_to "Back to quizzes", quizzes_path %>
+      <h3 class="text-lg font-semibold mt-4">Answers</h3>
+      <ul class="ml-4 list-disc">
+        <% question.answers.each do |answer| %>
+          <li class="mt-2">
+            <%= form_with(model: [question, UserAnswer.new], local: true) do |form| %>
+              <%= form.radio_button :answer_id, answer.id %>
+              <%= form.label :answer_id, answer.question_text %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>
 
-  <%= button_to "Destroy this quiz", @quiz, method: :delete %>
+<div class="mt-8">
+  <%= form_with(url: submit_answers_quiz_path(@quiz), method: :post, local: true) do |form| %>
+    <% @quiz.questions.each do |question| %>
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold"><%= question.question_text %></h3>
+        <% question.answers.each do |answer| %>
+          <div class="mt-2">
+            <%= form.radio_button "answers[#{question.id}]", answer.id, id: "answer_#{answer.id}" %>
+            <%= form.label "answer_#{answer.id}", answer.question_text %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <%= form.submit 'Submit Answers', class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+
+    <div class="mt-8">
+  <%= link_to 'Reset Answers', reset_answers_quiz_path(@quiz), method: :delete, data: { confirm: 'Are you sure you want to reset your answers and start over?' }, class: "bg-red-500 text-white px-4 py-2 rounded" %>
+    </div>
+
+  <% end %>
+  
 </div>

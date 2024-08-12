@@ -1,0 +1,15 @@
+<%= form_with(model: [@question.quiz, @question, @answer], local: true) do |form| %>
+  <div class="mb-4">
+    <%= form.label :question_text, class: "block text-lg font-medium text-gray-700" %>
+    <%= form.text_field :question_text, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.check_box :correct, class: "mr-2 leading-tight" %>
+    <%= form.label :correct, "Correct Answer?", class: "text-lg font-medium text-gray-700" %>
+  </div>
+
+  <div class="mt-6">
+    <%= form.submit class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+  </div>
+<% end %>

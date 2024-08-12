@@ -1,17 +1,26 @@
 Rails.application.routes.draw do
-  root 'quizzes#index'
-
-  get "/start_quiz", to: "quizzes#start"
+  
+  get 'pages/start'
+  devise_for :users
+  
 
   resources :quizzes do
-    resources :questions, shallow: true
-
-    get 'continue', on: :collection
-    get 'completed', on: :collection
+    resources :questions do
+      resources :answers
+    end
+    post 'submit_answers', on: :member
+    get 'review', on: :member
+    get 'results', on: :member
+    delete 'reset_answers', on: :member 
   end
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  root 'pages#start'  # Set the start page as the root
+  
+  get 'my_quizzes', to: 'quizzes#my_quizzes'
+
+  get 'highscores', to: 'highscores#index' 
+  resources :quizzes
+  
+  get 'my_quizzes', to: 'quizzes#my_quizzes'
+  
 end

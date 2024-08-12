@@ -1,18 +1,38 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Quizzito</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kva Quizzito</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
   </head>
 
-  <body class="container mx-auto p-4">
-    <%= render 'layouts/notice' %>
-    <%= yield %>
+  <body class="bg-gray-100">
+    <!-- Navigation Bar -->
+
+    <nav class="bg-blue-600 p-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <ul class="flex space-x-4 text-white">
+      <li><%= link_to 'Home', root_path, class: "hover:underline" %></li>
+      <li><%= link_to 'Quiz List', quizzes_path, class: "hover:underline" %></li>
+      <li><%= link_to 'My Quizzes', my_quizzes_path, class: "hover:underline" %></li>
+      <li><%= link_to 'Highscores', highscores_path, class: "hover:underline" %></li>
+    </ul>
+    <ul class="flex space-x-4 text-white">
+      <% if user_signed_in? %>
+        <li><%= link_to 'Logout', destroy_user_session_path, method: :delete, class: "hover:underline" %></li>
+      <% else %>
+        <li><%= link_to 'Login', new_user_session_path, class: "hover:underline" %></li>
+        <li><%= link_to 'Sign Up', new_user_registration_path, class: "hover:underline" %></li>
+      <% end %>
+    </ul>
+  </div>
+</nav>
+
+    <div class="container mx-auto px-4 py-8">
+      <%= yield %>
+    </div>
   </body>
 </html>

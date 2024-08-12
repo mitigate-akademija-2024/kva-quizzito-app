@@ -1,0 +1,22 @@
+<h1 class="text-3xl font-bold mb-4">Review Your Answers for: <%= @quiz.title %></h1>
+
+<ul class="mt-4">
+  <% @quiz.questions.each do |question| %>
+    <li class="mb-6">
+      <h3 class="text-xl"><%= question.question_text %></h3>
+
+      <p class="mt-2"><strong>Your Answer:</strong> <%= current_user.user_answers.find_by(question_id: question.id)&.answer&.question_text || "No answer selected" %></p>
+      
+      <div class="mt-2">
+        <%= link_to 'Change Answer', edit_quiz_question_path(@quiz, question), class: "text-blue-500 underline" %>
+      </div>
+    </li>
+  <% end %>
+</ul>
+
+<div class="mt-8">
+  <%= form_with(url: submit_answers_quiz_path(@quiz), method: :post, local: true) do |form| %>
+    <%= hidden_field_tag :finalize, true %>
+    <%= form.submit 'Submit Final Answers', class: "bg-green-500 text-white px-4 py-2 rounded" %>
+  <% end %>
+</div>

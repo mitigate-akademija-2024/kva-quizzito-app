@@ -1,27 +1,32 @@
-<%= form_with(model: quiz) do |form| %>
-  <% if quiz.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(quiz.errors.count, "error") %> prohibited this quiz from being saved:</h2>
-
-      <ul>
-        <% quiz.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
+<%= form_with(model: @quiz, local: true) do |form| %>
+  <!-- Quiz Title -->
+  <div class="mb-4">
+    <%= form.label :title, class: "block text-lg font-medium text-gray-700" %>
+    <%= form.text_field :title, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
   </div>
 
-  <div>
-    <%= form.label :description, style: "display: block" %>
-    <%= form.text_field :description %>
+  <!-- Quiz Description -->
+  <div class="mb-4">
+    <%= form.label :description, class: "block text-lg font-medium text-gray-700" %>
+    <%= form.text_area :description, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <!-- Questions -->
+  <h3 class="text-2xl font-semibold mt-6">Questions</h3>
+
+  <div id="questions">
+    <%= form.fields_for :questions do |q_form| %>
+      <%= render 'question_fields', f: q_form %>
+    <% end %>
+  </div>
+
+  <!-- Link to Add More Questions -->
+  <div class="mt-4">
+    <%= link_to_add_fields "Add Question", form, :questions, class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="mt-6">
+    <%= form.submit class: "bg-blue-500 text-white px-4 py-2 rounded" %>
   </div>
 <% end %>
