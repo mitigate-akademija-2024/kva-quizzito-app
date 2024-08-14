@@ -20,15 +20,31 @@
       <li><%= link_to 'My Quizzes', my_quizzes_path, class: "hover:underline" %></li>
       <li><%= link_to 'Highscores', highscores_path, class: "hover:underline" %></li>
     </ul>
-    <ul class="flex space-x-4 text-white">
-      <% if user_signed_in? %>
-        <li><%= link_to 'Profile', user_profile_path, class: "hover:underline" %></li>
-        <li><%= link_to 'Logout', destroy_user_session_path, method: :delete, class: "hover:underline" %></li>
-      <% else %>
-        <li><%= link_to 'Login', new_user_session_path, class: "hover:underline" %></li>
-        <li><%= link_to 'Sign Up', new_user_registration_path, class: "hover:underline" %></li>
-      <% end %>
-    </ul>
+        <turbo-frame id="navbar">
+
+                  <!-- Search Form -->
+            <div>
+              <%= form_with(url: search_quizzes_path, method: :get, local: true, data: { turbo: false }) do |form| %>
+                <%= form.text_field :query, placeholder: "Search quizzes...", class: "rounded p-2 text-black" %>
+                <%= form.submit "Search", class: "bg-gray-700 text-white p-2 rounded" %>
+              <% end %>
+            </div>
+          <ul class="flex space-x-4 text-white">
+            <% if user_signed_in? %>
+              <li><%= link_to 'Profile', user_profile_path, class: "hover:underline" %></li>
+              
+              <li>
+                <%= form_with url: destroy_user_session_path, method: :delete, class: "inline", data: { turbo: false } do %>
+                  <%= submit_tag 'Logout', class: "hover:underline bg-transparent border-0 text-white cursor-pointer" %>
+                <% end %>
+              </li>
+            <% else %>
+              <li><%= link_to 'Login', new_user_session_path, class: "hover:underline", data: { turbo: false } %></li>
+              <li><%= link_to 'Sign Up', new_user_registration_path, class: "hover:underline", data: { turbo: false } %></li>
+            <% end %>
+          </ul>
+        </turbo-frame>
+
   </div>
 </nav>
 

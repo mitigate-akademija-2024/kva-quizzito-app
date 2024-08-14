@@ -1,0 +1,13 @@
+<!-- app/views/quizzes/confirm_delete.html.erb -->
+<div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
+  <h1 class="text-3xl font-bold mb-4">Confirm Deletion</h1>
+
+  <p>Are you sure you want to delete the quiz "<%= @quiz.title %>"?</p>
+
+  <div class="mt-6">
+    <%= form_with(model: @quiz, url: quiz_path(@quiz), method: :delete, data: { turbo: false }) do %>
+      <%= submit_tag "Delete", class: "bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" %>
+    <% end %>
+    <%= link_to "Cancel", my_quizzes_path, class: "bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 ml-4" %>
+  </div>
+</div>

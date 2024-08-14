@@ -1,14 +1,46 @@
-<li class="mt-4 border-b border-gray-200 pb-4">
-  <div class="flex items-center justify-between">
-    <div>
-      <h2 class="text-xl font-semibold">
-        <%= link_to quiz.title, quiz_path(quiz), class: "text-blue-500 underline" %>
-      </h2>
-      <p class="text-gray-700"><%= quiz.description %></p>
-    </div>
-    <div>
-      <%= link_to 'Edit', edit_quiz_path(quiz), class: "text-gray-500 hover:text-gray-700 mr-4" %>
-      <%= link_to 'Delete', quiz_path(quiz), method: :delete, data: { confirm: 'Are you sure?' }, class: "text-red-500 hover:text-red-700" %>
-    </div>
-  </div>
-</li>
+<div id="<%= dom_id quiz %>">
+  <p>
+    <strong>Title:</strong>
+    <%= quiz.title %>
+  </p>
+  <h3>Created by: <%= quiz.user.email %></h3>
+  <p>
+    <strong>Description:</strong>
+    <%= quiz.description %>
+  </p>
+  <div class="overflow-x-auto rounded-lg border border-gray-200">
+    <table id="quizzes" class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+      <% quiz.questions.each do |question| %>
+        <thead class="text-left">
+          <tr>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+              <%= question.question_text %>
+            </th>
+            <% if user_signed_in? && current_user.id == quiz.user.id %>
+              <th class="whitespace-nowrap px-4 py-2">
+                <%= link_to "Edit", edit_quiz_question_path(quiz, question), class: "inline-block rounded border border-red-600 px-1 py-1 text-xs font-medium text-red-600 hover:bg-red-600 hover:text-white focus:outline-none focus:ring active:bg-red-500" %>
+                <%= link_to 'Delete', quiz_question_path(quiz, question), method: :delete, data: { confirm: 'Are you sure?' }, class: "text-red-600 hover:underline" %>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <thead class="text-left">
+          <% question.answers.each do |answer| %>
+            <tr>
+              <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                <% if answer.correct %>
+                  <span class="text-green-500 font-semibold">✔ </span>
+                <% end %>
+                <%= answer.answer_text %>
+              </th>
+            </tr>
+          <% end %>
+        </thead>
+      <% end %>
+    <tbody class="divide-y divide-gray-200">
+      <%= render partial: 'quiz_row', collection: @quizzes, as: :quiz %>
+    </tbody>
+  </table>
+</div>
+<%= link_to 'Add question', new_quiz_question_path(@quiz), class: "mt-10 p-3 transition-all group inline-block rounded bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-[2px] hover:text-white focus:outline-none focus:ring active:text-opacity-75" %>
+</div>

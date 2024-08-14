@@ -1,0 +1,7 @@
+      <li class="nested-form-wrapper" data-new-record="<%= form.object.new_record? %>">
+        <%= form.label :answer_text %>
+        <%= form.text_field :answer_text %>
+        <%= form.check_box :correct %>
+          <button type="button" data-action="nested-form#remove">Remove question</button>
+          <%= form.hidden_field :_destroy %>
+      </li>

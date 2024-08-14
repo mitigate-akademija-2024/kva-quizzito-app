@@ -1,48 +1,41 @@
 <div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
-
+  <!-- Quiz Title -->
   <h1 class="text-3xl font-bold mb-4"><%= @quiz.title %></h1>
-  <p class="text-lg text-gray-700"><%= @quiz.description %></p>
 
-  <h2 class="text-2xl font-semibold mt-8">Questions</h2>
-  <ul>
-    <% @questions.each do |question| %>
+  <!-- Quiz Creator -->
+  <p class="text-lg text-gray-700 mb-2">
+    <strong>Created by:</strong> <%= @quiz.user.email %>
+  </p>
+
+  <!-- Quiz Description -->
+  <p class="text-lg text-gray-700 mb-8">
+    <strong>Description:</strong> <%= @quiz.description %>
+  </p>
+
+  <!-- Questions Section -->
+  <h2 class="text-2xl font-semibold mb-4">Questions</h2>
+  <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+    <% @quiz.questions.each do |question| %>
       <div class="mb-6">
-        <h2 class="text-2xl font-semibold"><%= question.question_text %></h2>
-
-        <h3 class="text-lg font-semibold mt-4">Answers</h3>
-        <ul class="ml-4 list-disc">
+        <p class="text-xl font-medium text-blue-600"><%= question.question_text %></p>
+        <ul class="list-disc ml-8">
           <% question.answers.each do |answer| %>
-            <li class="mt-2">
-              <%= form_with(model: [question, UserAnswer.new], url: quiz_question_user_answers_path(@quiz, question), local: true, data: { turbo: false }) do |form| %>
-                <%= form.radio_button :answer_id, answer.id %>
-                <%= form.label :answer_id, answer.answer_text %>
+            <li class="mt-1"><%= answer.answer_text %></li>
+              <% if user_signed_in? && current_user.id == @quiz.user.id && answer.correct %>
+                <span class="text-green-500 font-semibold">(Correct)</span>
               <% end %>
-            </li>
           <% end %>
         </ul>
       </div>
-    <% end %>
-  </ul>
-
-  <div class="mt-8">
-    <%= form_with(url: submit_answers_quiz_path(@quiz), method: :post, local: true, data: { turbo: false }) do |form| %>
-  <% @quiz.questions.each do |question| %>
-    <div class="mb-4">
-      <h3 class="text-lg font-semibold"><%= question.question_text %></h3>
-      <% question.answers.each do |answer| %>
-        <div class="mt-2">
-          <%= form.radio_button "answers[#{question.id}]", answer.id, id: "answer_#{answer.id}" %>
-          <%= form.label "answer_#{answer.id}", answer.answer_text %>
-        </div>
+      <% if user_signed_in? && current_user.id == @quiz.user.id %>
       <% end %>
-    </div>
-  <% end %>
-  <%= form.submit 'Submit Answers', class: "bg-blue-500 text-white px-4 py-2 rounded" %>
-<% end %>
-
-    <div class="mt-8">
-      <%= button_to 'Reset Answers', reset_answers_quiz_path(@quiz), method: :delete, data: { turbo: false }, class: "bg-red-500 text-white px-4 py-2 rounded" %>
-    </div>
+    <% end %>
   </div>
 
+  <!-- Action Buttons -->
+  <div class="flex space-x-4">
+    <%= link_to "Edit this quiz", edit_quiz_path(@quiz), class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" %>
+    <%= link_to "Back to quizzes", quizzes_path, class: "bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700" %>
+    <%= link_to 'Delete this quiz', confirm_delete_quiz_path(@quiz), class: "bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" %>
+  </div>
 </div>

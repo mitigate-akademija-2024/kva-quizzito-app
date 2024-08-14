@@ -1,35 +1,50 @@
-<div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
+<%= form_with(model: @quiz, local: true, data: { turbo: false }) do |form| %>
+  <!-- Quiz Title -->
+  <div class="mb-4">
+    <%= form.label :title, class: "block text-lg font-medium text-gray-700" %>
+    <%= form.text_field :title, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+  </div>
 
-  <%= form_with(model: @quiz, local: true) do |form| %>
-    <!-- Quiz Title -->
-    <div class="mb-4">
-      <%= form.label :title, class: "block text-lg font-medium text-gray-700" %>
-      <%= form.text_field :title, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
-    </div>
+  <!-- Quiz Description -->
+  <div class="mb-4">
+    <%= form.label :description, class: "block text-lg font-medium text-gray-700" %>
+    <%= form.text_area :description, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+  </div>
 
-    <!-- Quiz Description -->
-    <div class="mb-4">
-      <%= form.label :description, class: "block text-lg font-medium text-gray-700" %>
-      <%= form.text_area :description, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
-    </div>
+  <!-- Questions Section -->
+  <h3 class="text-2xl font-semibold mt-6">Questions</h3>
+  <div id="questions">
+    <%= form.fields_for :questions do |q_form| %>
+      <div class="question-fields mb-6">
+        <%= q_form.label :question_text, "Question:", class: "block text-lg font-medium text-gray-700" %>
+        <%= q_form.text_field :question_text, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
 
-    <!-- Questions -->
-    <h3 class="text-2xl font-semibold mt-6">Questions</h3>
-    <div id="questions">
-      <%= form.fields_for :questions do |q_form| %>
-        <%= render 'question_fields', f: q_form %>
-      <% end %>
-    </div>
+        <div class="answers mt-4">
+          <%= q_form.fields_for :answers do |a_form| %>
+            <div class="answer-fields mb-4">
+              <%= a_form.label :answer_text, "Answer:", class: "block text-sm font-medium text-gray-700" %>
+              <%= a_form.text_field :answer_text, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+              <div class="flex items-center mt-2">
+                <%= a_form.check_box :correct, class: "mr-2" %>
+                <%= a_form.label :correct, "Correct?", class: "text-sm text-gray-700" %>
+              </div>
+              <%= a_form.hidden_field :_destroy %>
+            </div>
+          <% end %>
+        </div>
 
-    <!-- Link to Add More Questions -->
-    <div class="mt-4">
-      <%= link_to 'Add Question', '#', id: "add-question", class: "bg-blue-500 text-white px-4 py-2 rounded" %>
-    </div>
+        <%= link_to "Remove Question", '#', class: "remove-question bg-red-500 text-white px-4 py-2 rounded mt-2 inline-block" %>
+      </div>
+    <% end %>
+  </div>
 
-    <!-- Submit Button -->
-    <div class="mt-6">
-      <%= form.submit class: "bg-blue-500 text-white px-4 py-2 rounded" %>
-    </div>
-  <% end %>
+  <!-- Add More Questions Button -->
+  <div class="mt-4">
+    <%= link_to "Add Question", '#', id: "add-question", class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+  </div>
 
-</div>
+  <!-- Submit Button (Create/Save Quiz) -->
+  <div class="mt-6">
+    <%= form.submit @quiz.new_record? ? "Create Quiz" : "Save Changes", class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+  </div>
+<% end %>

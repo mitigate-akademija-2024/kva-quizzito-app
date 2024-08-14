@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_12_101504) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_14_070226) do
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
     t.string "answer_text", null: false
@@ -70,9 +70,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_101504) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "answers", "questions"
-  add_foreign_key "questions", "quizzes"
-  add_foreign_key "scores", "quizzes"
+  add_foreign_key "answers", "questions", on_delete: :cascade
+  add_foreign_key "questions", "quizzes", on_delete: :cascade
+  add_foreign_key "scores", "quizzes", on_delete: :cascade
   add_foreign_key "scores", "users"
   add_foreign_key "user_answers", "answers"
   add_foreign_key "user_answers", "questions"

@@ -1,18 +1,26 @@
 class QuestionsController < ApplicationController
-  before_action :set_quiz
-  before_action :set_question, only: [:edit, :update, :destroy]
-
-  def new
-    @question = @quiz.questions.build
-  end
+  before_action :set_quiz, only: [:new, :create]
+  before_action :set_question, only: [:destroy, :edit, :update]
 
   def create
-    @question = @quiz.questions.build(question_params)
+    @question = @quiz.questions.new(question_params)
+
     if @question.save
-      redirect_to @quiz, notice: 'Question added successfully.'
+      flash.notice = "Question was successfully created."
+      redirect_to quiz_url(@quiz)
     else
-      render :new, alert: 'Failed to add question.'
+      render :new, status: :unprocessable_entity
     end
+  end
+
+  def new
+    @question = @quiz.questions.new
+    @question.answers.build # Add one empty answer field by default
+  end
+
+  def destroy
+    @question.destroy
+    redirect_to quiz_path(@question.quiz), notice: "Question has been destroyed."
   end
 
   def edit
@@ -20,40 +28,11 @@ class QuestionsController < ApplicationController
 
   def update
     if @question.update(question_params)
-      redirect_to @quiz, notice: 'Question updated successfully.'
+      redirect_to quiz_url(@question.quiz), notice: "Question was successfully updated."
     else
-      render :edit, alert: 'Failed to update question.'
+      render :edit, status: :unprocessable_entity
     end
   end
-
-  def destroy
-    @question.destroy
-    redirect_to @quiz, notice: 'Question deleted successfully.'
-  end
-
-  def submit_answers
-    @quiz = Quiz.find(params[:quiz_id])
-    @user_answers = []
-
-    params[:answers].each do |question_id, answer_id|
-      user_answer = UserAnswer.create(
-        user: current_user,
-        question_id: question_id,
-        answer_id: answer_id
-      )
-      @user_answers << user_answer
-    end
-
-    redirect_to results_quiz_path(@quiz), notice: 'Your answers have been submitted successfully.'
-  end
-
-  def results
-    @quiz = Quiz.find(params[:id])
-    @user_answers = current_user.user_answers.where(question: @quiz.questions)
-    @correct_answers_count = @user_answers.select { |ua| ua.answer.correct }.count
-  end
-
-
 
   private
 
@@ -62,10 +41,10 @@ class QuestionsController < ApplicationController
   end
 
   def set_question
-    @question = @quiz.questions.find(params[:id])
+    @question = Question.find(params[:id])
   end
 
   def question_params
-    params.require(:question).permit(:question_text)
+    params.require(:question).permit(:question_text, answers_attributes: [:id, :answer_text, :correct, :_destroy])
   end
 end

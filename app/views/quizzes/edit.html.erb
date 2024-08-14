@@ -1,10 +1,12 @@
-<h1>Editing quiz</h1>
+<div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
 
-<%= render "form", quiz: @quiz %>
+  <h1>Edit Quiz</h1>
 
-<br>
+  <%= render "form", quiz: @quiz %>
 
-<div>
-  <%= link_to "Show this quiz", @quiz %> |
-  <%= link_to "Back to quizzes", quizzes_path %>
+  <br>
+
+  <div>
+    <%= link_to "Back to quizzes", quizzes_path %>
+  </div>
 </div>

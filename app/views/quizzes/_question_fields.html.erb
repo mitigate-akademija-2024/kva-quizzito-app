@@ -1,17 +1,23 @@
-<div class="nested-fields mb-4">
-  <label for="<%= "#{f.object_name}_question_text" %>" class="block text-lg font-medium text-gray-700">Question:</label>
-  <%= f.text_field :question_text, id: "#{f.object_name}_question_text", class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+<% @quiz.questions.each do |question| %>
+  <% unique_id = Time.now.to_i %>
+  <div class="nested-fields mb-4">
+    <%= question_form.hidden_field :id %>
+    <label for="question_<%= unique_id %>_question_text" class="block text-lg font-medium text-gray-700">Question:</label>
+    <input type="text" name="quiz[questions_attributes][<%= unique_id %>][question_text]" id="question_<%= unique_id %>_question_text" value="<%= question.question_text %>" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
 
-  <h4 class="text-lg font-semibold mt-4">Answers</h4>
-  <div class="ml-4">
-    <%= f.fields_for :answers do |a_form| %>
-      <div class="mb-2">
-        <%= a_form.text_field :answer_text, placeholder: "Answer text", class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
-        <%= a_form.check_box :correct, class: "ml-2" %>
-        <%= a_form.label :correct, "Correct", class: "ml-2 text-gray-700" %>
-      </div>
-    <% end %>
+    <h4 class="text-lg font-semibold mt-4">Answers</h4>
+    <div class="ml-4">
+      <% question.answers.each do |answer| %>
+        <% answer_unique_id = Time.now.to_i %>
+        <div class="mb-2">
+          <%= answer_form.hidden_field :id %>
+          <input type="text" name="quiz[questions_attributes][<%= unique_id %>][answers_attributes][<%= answer_unique_id %>][answer_text]" id="answer_<%= answer_unique_id %>_answer_text" value="<%= answer.answer_text %>" placeholder="Answer text" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+          <input type="checkbox" name="quiz[questions_attributes][<%= unique_id %>][answers_attributes][<%= answer_unique_id %>][correct]" id="answer_<%= answer_unique_id %>_correct" <%= answer.correct ? 'checked' : '' %> class="ml-2" />
+          <label for="answer_<%= answer_unique_id %>_correct" class="ml-2 text-gray-700">Correct</label>
+        </div>
+      <% end %>
+    </div>
+
+    <%= link_to "Remove Question", '#', class: "remove-question bg-red-500 text-white px-4 py-2 rounded mt-2" %>
   </div>
-
-  <%= link_to "Remove Question", '#', class: "remove-question bg-red-500 text-white px-4 py-2 rounded mt-2" %>
-</div>
+<% end %>

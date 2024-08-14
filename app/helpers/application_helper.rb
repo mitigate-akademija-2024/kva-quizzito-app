@@ -1,10 +1,6 @@
 module ApplicationHelper
-  def link_to_add_fields(name, f, association, **args)
-    new_object = f.object.send(association).klass.new
-    id = new_object.object_id
-    fields = f.fields_for(association, new_object, child_index: id) do |builder|
-      render(association.to_s.singularize + "_fields", f: builder)
-    end
-    link_to(name, '#', class: "add_fields #{args[:class]}", data: { association: association, content: fields.gsub("\n", "") })
+
+  def btn_1
+    'transition-all group inline-block rounded bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-[2px] hover:text-white focus:outline-none focus:ring active:text-opacity-75'
   end
 end

@@ -1,119 +1,190 @@
 class QuizzesController < ApplicationController
 
-  skip_before_action :authenticate_user!, only: [:index, :show]
-  
-  before_action :authenticate_user!
-  before_action :set_quiz, only: [:show, :edit, :update, :destroy]
+  before_action :set_quiz, only: %i[show edit update destroy results do_quiz submit_quiz take submit_results quiz_finished confirm_delete]
 
+  # GET /quizzes or /quizzes.json
   def index
-    @quizzes = Quiz.all
+    @quizzes = Quiz.all  # Retrieve all quizzes, not just those owned by the current user
   end
 
+  def start
+    @title = 'Start some quiz'
+    @description = 'lorem ipsum'
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: { title: @title, description: "Šī ir json atbilde" }
+      end
+    end
+  end
+
+  # GET /quizzes/1 or /quizzes/1.json
   def show
-    @quiz = Quiz.find(params[:id])
-    @questions = @quiz.questions  
   end
 
   def new
     @quiz = current_user.quizzes.build
-    @quiz.questions.build # Initialize at least one question
-    4.times { question.answers.build } # Initialize with 4 empty answers
-
+    build_questions_with_answers(@quiz, initialize_if_empty: true)
   end
-
-  def create
-    @quiz = current_user.quizzes.build(quiz_params)
-    if @quiz.save
-      redirect_to my_quizzes_path, notice: 'Quiz was successfully created.'
-    else
-      render :new
-    end
-  end # <-- This 'end' was missing
 
   def edit
-    @quiz = current_user.quizzes.find(params[:id])
-
+    build_questions_with_answers(@quiz, initialize_if_empty: true)
   end
 
+  # POST /quizzes or /quizzes.json
+  def create
+    @quiz = current_user.quizzes.build(quiz_params)
+
+    if @quiz.save
+      redirect_to @quiz, notice: "Quiz was successfully created."
+    else
+      build_questions_with_answers(@quiz, initialize_if_empty: false)
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+
+  # PATCH/PUT /quizzes/1 or /quizzes/1.json
   def update
-    @quiz = current_user.quizzes.find(params[:id])
     if @quiz.update(quiz_params)
-      redirect_to my_quizzes_path, notice: 'Quiz was successfully updated.'
+      redirect_to @quiz, notice: "Quiz was successfully updated."
     else
-      render :edit
+      build_questions_with_answers(@quiz, initialize_if_empty: false)
+      render :edit, status: :unprocessable_entity
     end
   end
 
+  def confirm_delete
+  end
+
+  # DELETE /quizzes/1 or /quizzes/1.json
   def destroy
-    @quiz.destroy
-    redirect_to quizzes_url, notice: 'Quiz was successfully destroyed.'
-  end
-
-  def submit_answers
-    @quiz = Quiz.find(params[:quiz_id])
-  
-    if params[:answers].blank?
-      redirect_to quiz_path(@quiz), alert: 'You must select an answer for each question before saving.'
-      return
-    end
-  
-    correct_answers_count = 0
-  
-    params[:answers].each do |question_id, answer_id|
-      question = Question.find(question_id)
-      user_answer = current_user.user_answers.find_or_initialize_by(
-        question_id: question_id,
-        user_id: current_user.id
-      )
-      user_answer.answer_id = answer_id
-      user_answer.draft = params[:finalize].blank?
-      user_answer.save
-  
-      correct_answers_count += 1 if question.correct_answer_id == answer_id.to_i
-    end
-  
-    if params[:finalize].present?
-      current_user.scores.create(quiz: @quiz, score: correct_answers_count)
-      redirect_to results_quiz_path(@quiz), notice: 'Your answers have been submitted successfully.'
+    if @quiz.destroy
+      redirect_to my_quizzes_path, notice: "Quiz was successfully deleted."
     else
-      redirect_to review_quiz_path(@quiz), notice: 'Your answers have been saved. You can review them before final submission.'
+      redirect_to my_quizzes_path, alert: "Quiz could not be deleted."
     end
   end
 
-
-  def results
-    @quiz = Quiz.find(params[:id])
-    @user_answers = current_user.user_answers.where(question: @quiz.questions, draft: false)
-
-    if @user_answers.empty?
-      redirect_to quiz_path(@quiz), alert: 'You need to take the quiz before viewing the results.'
-      return
-    end
-
-    @correct_answers_count = @user_answers.select { |ua| ua.answer.correct }.count
+  def do_quiz
+    @questions = @quiz.questions.includes(:answers)
   end
 
-  def reset_answers
-    @quiz = Quiz.find(params[:id])
-    current_user.user_answers.where(question: @quiz.questions).destroy_all
-    redirect_to quiz_path(@quiz), notice: 'Your answers have been reset. You can now start the quiz again.'
-  end
+  def submit_quiz
+    correct_answers = 0
+    total_questions = @quiz.questions.count
   
+    params.each do |answer, value|
+      if answer.start_with?('question_')
+        question_id = answer.split('_').last
+        question = Question.find(question_id)
+        answer = Answer.find(value)
+        correct_answers += 1 if answer.correct
+      end
+    end
+  
+    score = (correct_answers.to_f / total_questions * 100).round
+  
+    user_score = UserScore.create(user: current_user, quiz: @quiz, score: score)
+  
+    redirect_to result_quiz_path(@quiz, score: score)
+  
+  end
+
+  # GET /quizzes/:id/take
+  def take
+    @questions = @quiz.questions.includes(:answers)
+  end
+
+  # POST /quizzes/:id/submit_results
+  def submit_results
+    score = calculate_score
+    UserScore.create(user: current_user, quiz: @quiz, score: score)
+  
+    redirect_to quiz_finished_quiz_path(@quiz, score: score)
+  end
+
+  # GET /quizzes/:id/finished
+  def quiz_finished
+    @score = params[:score]
+    @quiz = Quiz.find(params[:id])
+  end
+
+  # GET /quizzes/:id/results
+  def results
+    @score = params[:score]
+    @user_score = current_user.user_scores.find_by(quiz: @quiz)
+
+    if @score.nil?
+      flash[:alert] = "No score available. Please take the quiz first."
+      redirect_to take_quiz_path(@quiz) and return
+    end
+  end
+
   def my_quizzes
     @quizzes = current_user.quizzes
   end
   
+  def all_high_scores
+    @quizzes_with_scores = Quiz.joins(:user_scores)
+                               .distinct
+                               .order(:title)
+    
+    @top_scores = {}
+    @quizzes_with_scores.each do |quiz|
+      @top_scores[quiz.id] = UserScore.top_scores_for_quiz(quiz)
+    end
+  end
+
+  def search
+    if params[:query].present?
+      @quizzes = Quiz.where("title ILIKE ?", "%#{params[:query]}%")
+    else
+      @quizzes = Quiz.none
+    end
+  end
+
   private
-
-  def set_quiz
-    @quiz = Quiz.find(params[:id])
-  end
-
-  def quiz_params
-    params.require(:quiz).permit(:title, :description, questions_attributes: [
-      :id, :question_text, :_destroy,
-      answers_attributes: [:id, :answer_text, :correct, :_destroy]
-    ])
-  end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_quiz
+      @quiz = Quiz.find(params[:id])  # Find the quiz by ID without restricting to the current user
+    end
   
-end
+    def quiz_params
+      params.require(:quiz).permit(
+        :title, 
+        :description,
+        questions_attributes: [
+          :id, :question_text, :_destroy,
+          answers_attributes: [:id, :answer_text, :correct, :_destroy]
+        ]
+      )
+    end
+
+    def calculate_score
+      correct_answers = 0
+      total_questions = @quiz.questions.count
+  
+      params[:answers]&.each do |question_id, answer_id|
+        question = Question.find(question_id)
+        answer = Answer.find(answer_id)
+        correct_answers += 1 if answer.correct
+      end
+  
+      (correct_answers.to_f / total_questions * 100).round
+    end
+
+    def build_questions_with_answers(quiz, initialize_if_empty: false)
+      if initialize_if_empty && quiz.questions.empty?
+        question = quiz.questions.build
+        4.times { question.answers.build }
+      else
+        quiz.questions.each do |question|
+          4.times { question.answers.build } while question.answers.size < 4
+        end
+      end
+    end
+    
+  end
+

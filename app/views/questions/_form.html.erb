@@ -1,10 +1,30 @@
-<%= form_with(model: [@quiz, @question], local: true) do |form| %>
-  <div class="mb-4">
-    <%= form.label :question_text, class: "block text-lg font-medium text-gray-700" %>
-    <%= form.text_field :question_text, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+<%= form_with(model: question.persisted? ? question : [question.quiz, question], data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper' }) do |form| %>
+  <template data-nested-form-target="template">
+    <%= form.fields_for :answers, Answer.new, child_index: 'NEW_RECORD' do |ff| %>
+      <%= render "answer_form", form: ff %>
+    <% end %>
+  </template>
+  <% if question.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(question.errors.count, "error") %> prohibited this question from being saved:</h2>
+      <ul>
+        <% question.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="flex flex-col">
+    <%= form.label :question_text %>
+    <%= form.text_field :question_text %>
+    <h3>Answers</h3>
+    <%= form.fields_for :answers do |ff| %>
+      <%=render 'answer_form', form: ff %>
+    <% end %>
+    <div data-nested-form-target="target"></div>
+    <button type="button" data-action="nested-form#add" class='inline-block rounded border border-red-600 px-1 py-1 text-xs font-medium text-red-600 hover:bg-red-600 hover:text-white focus:outline-none focus:ring active:bg-red-500'>Add answer</button>
   </div>
-
-  <div class="mt-6">
-    <%= form.submit class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+  <div class="mt-4">
+    <%= form.submit %>
   </div>
 <% end %>

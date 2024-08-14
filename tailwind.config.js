@@ -6,6 +6,12 @@ module.exports = {
     './app/javascript/**/*.js'
   ],
   plugins: [
-    require('@tailwindcss/forms')
+    require('@tailwindcss/forms'),
+    // ...
   ],
+  theme: {
+    fontFamily: {
+      mono: ['"Space Mono"', 'monospace']
+    }
+  },
 }

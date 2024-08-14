@@ -1,0 +1,37 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
+  <h1 class="text-3xl font-bold mb-4"><%= @quiz.title %></h1>
+  <p class="text-lg text-gray-700 mb-8"><%= @quiz.description %></p>
+
+  <%= form_with(url: submit_results_quiz_path(@quiz), method: :post, local: true, data: { turbo: false }) do |form| %>
+  <table class="min-w-full bg-white shadow-md rounded-lg">
+    <thead>
+      <tr class="bg-gray-800 text-white">
+        <th class="py-2 px-4">Question</th>
+        <th class="py-2 px-4">Answers</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @quiz.questions.each do |question| %>
+        <tr class="border-b">
+          <td class="py-2 px-4">
+            <strong><%= question.question_text %></strong>
+          </td>
+          <td class="py-2 px-4">
+            <ul class="list-none">
+              <% question.answers.each do |answer| %>
+                <li class="mt-2">
+                  <%= form.radio_button "answers[#{question.id}]", answer.id, id: "answer_#{answer.id}" %>
+                  <%= form.label "answer_#{answer.id}", answer.answer_text %>
+                </li>
+              <% end %>
+            </ul>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="mt-8 flex space-x-4">
+    <%= form.submit 'Submit Answers', class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+  </div>
+<% end %>
