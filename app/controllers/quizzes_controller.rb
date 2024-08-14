@@ -114,15 +114,17 @@ class QuizzesController < ApplicationController
     @quizzes = current_user.quizzes
   end
   
-  def all_high_scores
-    @quizzes_with_scores = Quiz.joins(:user_scores)
-                               .distinct
-                               .order(:title)
-    
-    @top_scores = {}
-    @quizzes_with_scores.each do |quiz|
-      @top_scores[quiz.id] = UserScore.top_scores_for_quiz(quiz)
-    end
+  def highscores
+    @highscores = User.joins(:user_scores)
+                      .select('users.*, SUM(user_scores.score) AS total_score')
+                      .group('users.id')
+                      .order('total_score DESC')
+                      .limit(10)
+  end
+
+  def quiz_highscores
+    @quiz = Quiz.find(params[:id])
+    @highscores = @quiz.user_scores.order(score: :desc).limit(10)
   end
 
   def search

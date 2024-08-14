@@ -2,14 +2,14 @@
   <td class="py-2 px-4 font-semibold">
     <%= quiz.title %>
   </td>
-  <td class="py-2 px-4">
+  <td class="py-2 px-4 text-gray-800">
     <%= quiz.description %>
   </td>
-  <td class="py-2 px-4">
-    <%= quiz.created_at.strftime("%Y %B %d") %>
+  <td class="py-2 px-4 text-gray-800">
+    <%= quiz.created_at.strftime('%B %d, %Y') %>
   </td>
-  <td class="py-2 px-4">
-  <%= link_to 'Take Quiz', take_quiz_path(quiz), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
+  <td class="py-2 px-4 text-gray-800 flex items-center space-x-4">
+    <%= link_to 'Take Quiz', take_quiz_path(quiz), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
+    <%= link_to 'Highscores', highscores_quiz_path(quiz), class: "text-blue-500 hover:underline" %>
   </td>
-
 </tr>

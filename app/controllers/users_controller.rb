@@ -4,6 +4,6 @@ class UsersController < ApplicationController
   def profile
     @user = current_user
     @quizzes = @user.quizzes
-    @scores = @user.scores.includes(:quiz)
+    @scores = @user.user_scores.includes(:quiz)
   end
 end

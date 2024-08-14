@@ -25,4 +25,21 @@
       <p>You haven't created any quizzes yet.</p>
     <% end %>
   </div>
+
+  <div class="bg-white p-6 rounded-lg shadow-lg mt-8">
+    <h2 class="text-2xl font-semibold mb-4">Your Scores</h2>
+    <% if @scores.any? %>
+      <ul>
+        <% @scores.each do |score| %>
+          <li class="mb-2">
+            Quiz: <%= link_to score.quiz.title, quiz_path(score.quiz), class: "text-blue-500 hover:underline" %> - 
+            Score: <%= score.score %>%
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>You haven't taken any quizzes yet.</p>
+    <% end %>
+  </div>
+  
 </div>

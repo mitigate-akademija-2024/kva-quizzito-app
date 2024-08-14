@@ -15,8 +15,10 @@ end
       get 'take'      # Route for taking the quiz
       post 'submit_results' # Route for submitting quiz answers
       get 'results'   # Route for viewing quiz results
+      get 'highscores', to: 'quizzes#quiz_highscores'
       get 'finished', to: 'quizzes#quiz_finished', as: 'quiz_finished'
       get 'confirm_delete', to: 'quizzes#confirm_delete', as: 'confirm_delete' 
+      
 
     end
 
