@@ -27,10 +27,25 @@
           <% end %>
         </ul>
       </div>
-      <% if user_signed_in? && current_user.id == @quiz.user.id %>
-      <% end %>
     <% end %>
   </div>
+  
+  <!-- Check if user has already taken the quiz -->
+  <% if user_signed_in? %>
+    <% user_score = current_user.user_scores.find_by(quiz: @quiz) %>
+    <% if user_score %>
+      <p class="text-red-600 font-semibold mb-4">
+        You have already taken this quiz. Your score was <%= user_score.score %>.
+      </p>
+    <% else %>
+      <%= link_to 'Take Quiz', take_quiz_path(@quiz), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
+    <% end %>
+  <% else %>
+    <p class="text-blue-600 font-semibold mb-4">
+      Please log in to take this quiz.
+    </p>
+    <%= link_to 'Login', new_user_session_path, class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <% end %>
 
   <!-- Feedback Form -->
   <h2 class="text-2xl font-semibold mb-4 mt-8">Leave Feedback</h2>

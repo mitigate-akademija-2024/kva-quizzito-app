@@ -18,10 +18,11 @@ end
       get 'take'      # Route for taking the quiz
       post 'submit_results', to: 'quizzes#submit_results'
       get 'results'   # Route for viewing quiz results
-      get 'highscores', to: 'quizzes#quiz_highscores'
+      get 'highscores', to: 'highscores#quiz_highscores'
+      get 'export_highscores_csv', to: 'highscores#export_highscores_csv'
       get 'finished', to: 'quizzes#quiz_finished', as: 'quiz_finished'
       get 'confirm_delete', to: 'quizzes#confirm_delete', as: 'confirm_delete' 
-      
+      post 'submit_feedback', to: 'quizzes#submit_feedback'      
 
     end
 
@@ -37,12 +38,18 @@ end
     
   end
 
+  resources :highscores, only: [:index] do
+    collection do
+      get :export_csv
+    end
+  end
+
   root 'pages#start'  # Set the start page as the root
   
   get 'my_quizzes', to: 'quizzes#my_quizzes'
   get 'highscores', to: 'highscores#index'
   get 'profile', to: 'users#profile', as: 'user_profile'
   get 'my_feedbacks', to: 'feedbacks#index', as: 'my_feedbacks'
-  get 'highscores/export_csv', to: 'highscores#export_csv', as: 'export_highscores_csv'
+  get 'highscores', to: 'highscores#quiz_highscores', as: 'quiz_highscores'
 
 end

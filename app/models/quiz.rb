@@ -4,9 +4,12 @@ class Quiz < ApplicationRecord
   before_validation :normalize_title
   before_save :normalize_description
 
+
+  has_many :scores, dependent: :destroy
   has_many :questions, dependent: :destroy
-  has_many :user_scores, dependent: :destroy
+  has_many :user_scores, class_name: 'Score', dependent: :destroy
   has_many :feedbacks
+
 
   belongs_to :user
 

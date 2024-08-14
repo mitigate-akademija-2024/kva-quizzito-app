@@ -82,11 +82,23 @@ class QuizzesController < ApplicationController
 
   # GET /quizzes/:id/take
   def take
-    @questions = @quiz.questions.includes(:answers)
+    # If the user has already taken the quiz, redirect them with a message
+    if @user_already_taken_quiz
+      redirect_to quiz_path(@quiz), alert: "You have already taken this quiz."
+    else
+      @questions = @quiz.questions.includes(:answers)
+    end
   end
+
 
   # POST /quizzes/:id/submit_results
   def submit_results
+
+    # Only allow submission if the user hasn't taken the quiz yet
+    if @user_already_taken_quiz
+      redirect_to quiz_path(@quiz), alert: "You cannot submit results for this quiz because you've already completed it."
+      return
+    end
     user_answers = []
     correct_answers = []
     
@@ -157,10 +169,18 @@ class QuizzesController < ApplicationController
                       .order('total_score DESC')
                       .limit(10)
   end
-
+  
   def quiz_highscores
     @quiz = Quiz.find(params[:id])
-    @highscores = @quiz.user_scores.order(score: :desc).limit(10)
+    @highscores = @quiz.scores.joins(:user)
+                             .select('users.username, users.email, scores.score')
+                             .order('scores.score DESC')
+                             .limit(10)
+  
+    respond_to do |format|
+      format.html # Render the quiz_highscores.html.erb view
+      format.csv { send_data generate_csv(@highscores), filename: "quiz-#{@quiz.id}-highscores-#{Date.today}.csv" }
+    end
   end
 
   def search
@@ -183,7 +203,20 @@ class QuizzesController < ApplicationController
     end
   end
 
+  def export_highscores_csv
+    @quiz = Quiz.find(params[:id])
+    @highscores = @quiz.user_scores.joins(:user).select('users.username, users.email, user_scores.score').order('user_scores.score DESC')
+
+    respond_to do |format|
+      format.csv { send_data generate_csv(@highscores), filename: "quiz-#{@quiz.id}-highscores-#{Date.today}.csv" }
+    end
+  end
+
   private
+
+    def check_user_participation
+      @user_already_taken_quiz = UserScore.exists?(user: current_user, quiz: @quiz)
+    end
 
     def feedback_params
       params.require(:feedback).permit(:content)
@@ -225,6 +258,16 @@ class QuizzesController < ApplicationController
       else
         quiz.questions.each do |question|
           4.times { question.answers.build } while question.answers.size < 4
+        end
+      end
+    end
+
+    def generate_csv(highscores)
+      CSV.generate(headers: true) do |csv|
+        csv << ['Username', 'Email', 'Score']
+  
+        highscores.each do |highscore|
+          csv << [highscore.username || highscore.email, highscore.email, highscore.score]
         end
       end
     end
