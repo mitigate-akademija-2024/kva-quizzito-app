@@ -1,5 +1,10 @@
 class HighscoresController < ApplicationController
   def index
-    @highscores = Score.includes(:user, :quiz).order(score: :desc).limit(10)
+    @top_users = User
+                  .joins(:scores)
+                  .select('users.*, SUM(scores.score) as total_score')
+                  .group('users.id')
+                  .order('total_score DESC')
+                  .limit(10)
   end
 end

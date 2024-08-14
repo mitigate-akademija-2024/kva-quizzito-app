@@ -10,5 +10,8 @@ class User < ApplicationRecord
   has_many :user_scores
   has_many :scores, through: :user_scores, source: :quiz
   
+  def total_score
+    scores.sum(:score)
+  end
 
 end
