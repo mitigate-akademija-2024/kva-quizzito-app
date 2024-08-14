@@ -11,9 +11,12 @@ Rails.application.routes.draw do
 end
 
   resources :quizzes do
+
+    post 'submit_feedback', on: :member
+
     member do
       get 'take'      # Route for taking the quiz
-      post 'submit_results' # Route for submitting quiz answers
+      post 'submit_results', to: 'quizzes#submit_results'
       get 'results'   # Route for viewing quiz results
       get 'highscores', to: 'quizzes#quiz_highscores'
       get 'finished', to: 'quizzes#quiz_finished', as: 'quiz_finished'
@@ -29,6 +32,8 @@ end
     resources :questions do
       resources :user_answers, only: [:create]
     end
+
+    resources :feedbacks, only: [:create]
     
   end
 
@@ -37,4 +42,7 @@ end
   get 'my_quizzes', to: 'quizzes#my_quizzes'
   get 'highscores', to: 'highscores#index'
   get 'profile', to: 'users#profile', as: 'user_profile'
+  get 'my_feedbacks', to: 'feedbacks#index', as: 'my_feedbacks'
+  get 'highscores/export_csv', to: 'highscores#export_csv', as: 'export_highscores_csv'
+
 end

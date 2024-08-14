@@ -27,6 +27,22 @@
   </div>
 
   <div class="bg-white p-6 rounded-lg shadow-lg mt-8">
+    <h2 class="text-2xl font-semibold mb-4">Feedback Received</h2>
+    <% if @received_feedbacks.any? %>
+      <ul>
+        <% @received_feedbacks.each do |feedback| %>
+          <li class="mb-2">
+            <strong>Quiz:</strong> <%= link_to feedback.quiz.title, quiz_path(feedback.quiz), class: "text-blue-500 hover:underline" %><br>
+            <strong>Feedback:</strong> <%= feedback.content %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>You haven't received any feedback yet.</p>
+    <% end %>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg shadow-lg mt-8">
     <h2 class="text-2xl font-semibold mb-4">Your Scores</h2>
     <% if @scores.any? %>
       <ul>
@@ -41,5 +57,5 @@
       <p>You haven't taken any quizzes yet.</p>
     <% end %>
   </div>
-  
+
 </div>

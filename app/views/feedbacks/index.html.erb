@@ -1,0 +1,17 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
+  <h1 class="text-4xl font-bold mb-8">My Feedbacks</h1>
+  <div class="bg-white p-6 rounded-lg shadow-lg">
+    <% if @feedbacks.any? %>
+      <ul>
+        <% @feedbacks.each do |feedback| %>
+          <li class="mb-2">
+            <strong>Quiz:</strong> <%= link_to feedback.quiz.title, quiz_path(feedback.quiz), class: "text-blue-500 hover:underline", data: { turbo: false } %><br>
+            <strong>Feedback:</strong> <%= feedback.content %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>You haven't left any feedback yet.</p>
+    <% end %>
+  </div>
+</div>

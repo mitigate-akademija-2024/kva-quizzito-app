@@ -87,16 +87,52 @@ class QuizzesController < ApplicationController
 
   # POST /quizzes/:id/submit_results
   def submit_results
+    user_answers = []
+    correct_answers = []
+    
+    params[:answers]&.each do |question_id, answer_id|
+      question = Question.find_by(id: question_id)
+      
+      if question
+        selected_answer = Answer.find_by(id: answer_id)
+        correct_answer = question.answers.find_by(correct: true)
+        
+        user_answers << { question: question, selected_answer: selected_answer }
+        correct_answers << { question: question, correct_answer: correct_answer } if correct_answer
+      end
+    end
+  
     score = calculate_score
     UserScore.create(user: current_user, quiz: @quiz, score: score)
   
-    redirect_to quiz_finished_quiz_path(@quiz, score: score)
+    redirect_to quiz_finished_quiz_path(@quiz, score: score, user_answers: user_answers, correct_answers: correct_answers)
   end
-
-  # GET /quizzes/:id/finished
+  
   def quiz_finished
     @score = params[:score]
-    @quiz = Quiz.find(params[:id])
+  
+    # Initialize hashes to store the objects instead of IDs
+    @user_answers = {}
+    @correct_answers = {}
+  
+    # Ensure params[:user_answers] and params[:correct_answers] are not nil
+    params[:user_answers]&.each do |question_id, answer_id|
+      question = Question.find_by(id: question_id)
+      selected_answer = Answer.find_by(id: answer_id)
+  
+      if question
+        @user_answers[question] = selected_answer
+      end
+    end
+  
+    params[:correct_answers]&.each do |question_id, correct_answer_id|
+      question = Question.find_by(id: question_id)
+      correct_answer = Answer.find_by(id: correct_answer_id)
+  
+      if question
+        @correct_answers[question] = correct_answer
+      end
+    end
   end
 
   # GET /quizzes/:id/results
@@ -135,7 +171,24 @@ class QuizzesController < ApplicationController
     end
   end
 
+  def submit_feedback
+    @quiz = Quiz.find(params[:id])
+    @feedback = @quiz.feedbacks.new(feedback_params)
+    @feedback.user = current_user
+  
+    if @feedback.save
+      redirect_to user_profile_path, notice: 'Feedback submitted successfully.'
+    else
+      redirect_to quiz_finished_quiz_path(@quiz, score: params[:score], error: @feedback.errors.full_messages.to_sentence)
+    end
+  end
+
   private
+
+    def feedback_params
+      params.require(:feedback).permit(:content)
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_quiz
       @quiz = Quiz.find(params[:id])  # Find the quiz by ID without restricting to the current user
@@ -177,4 +230,3 @@ class QuizzesController < ApplicationController
     end
     
   end
-

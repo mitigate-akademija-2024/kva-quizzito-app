@@ -6,6 +6,7 @@ class Quiz < ApplicationRecord
 
   has_many :questions, dependent: :destroy
   has_many :user_scores, dependent: :destroy
+  has_many :feedbacks
 
   belongs_to :user
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_14_105856) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_14_125238) do
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
     t.string "answer_text", null: false
@@ -18,6 +18,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_14_105856) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "feedbacks", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "quiz_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quiz_id"], name: "index_feedbacks_on_quiz_id"
+    t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -73,6 +83,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_14_105856) do
   end
 
   add_foreign_key "answers", "questions", on_delete: :cascade
+  add_foreign_key "feedbacks", "quizzes"
+  add_foreign_key "feedbacks", "users"
   add_foreign_key "questions", "quizzes", on_delete: :cascade
   add_foreign_key "scores", "quizzes", on_delete: :cascade
   add_foreign_key "scores", "users"

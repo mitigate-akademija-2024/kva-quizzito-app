@@ -20,6 +20,7 @@
           <li><%= link_to 'Quiz List', quizzes_path, class: "hover:underline" %></li>
           <% if user_signed_in? %>
             <li><%= link_to 'My Quizzes', my_quizzes_path, class: "hover:underline" %></li>
+            <li><%= link_to 'My Feedbacks', my_feedbacks_path, class: "hover:underline" %></li>
           <% end %>
           <li><%= link_to 'Highscores', highscores_path, class: "hover:underline" %></li>
         </ul>

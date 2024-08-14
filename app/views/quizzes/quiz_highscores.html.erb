@@ -1,6 +1,9 @@
 <div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
   <h1 class="text-4xl font-bold mb-8 text-center"><%= @quiz.title %> - Highscores</h1>
 
+<%= link_to 'Export as CSV', export_highscores_csv_path(format: :csv), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
+
+
   <div class="bg-white shadow overflow-hidden sm:rounded-lg">
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
