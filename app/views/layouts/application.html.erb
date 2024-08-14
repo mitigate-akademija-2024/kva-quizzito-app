@@ -13,25 +13,30 @@
     <!-- Navigation Bar -->
 
     <nav class="bg-blue-600 p-4 shadow-lg fixed top-0 left-0 w-full z-10">
-  <div class="container mx-auto flex justify-between items-center">
-    <ul class="flex space-x-4 text-white">
-      <li><%= link_to 'Home', root_path, class: "hover:underline" %></li>
-      <li><%= link_to 'Quiz List', quizzes_path, class: "hover:underline" %></li>
-      <li><%= link_to 'My Quizzes', my_quizzes_path, class: "hover:underline" %></li>
-      <li><%= link_to 'Highscores', highscores_path, class: "hover:underline" %></li>
-    </ul>
-        <turbo-frame id="navbar">
+      <div class="container mx-auto flex justify-between items-center">
+        <!-- Left side navigation links -->
+        <ul class="flex space-x-4 text-white">
+          <li><%= link_to 'Home', root_path, class: "hover:underline" %></li>
+          <li><%= link_to 'Quiz List', quizzes_path, class: "hover:underline" %></li>
+          <% if user_signed_in? %>
+            <li><%= link_to 'My Quizzes', my_quizzes_path, class: "hover:underline" %></li>
+          <% end %>
+          <li><%= link_to 'Highscores', highscores_path, class: "hover:underline" %></li>
+        </ul>
 
-                  <!-- Search Form -->
-            <div>
-              <%= form_with(url: search_quizzes_path, method: :get, local: true, data: { turbo: false }) do |form| %>
-                <%= form.text_field :query, placeholder: "Search quizzes...", class: "rounded p-2 text-black" %>
-                <%= form.submit "Search", class: "bg-gray-700 text-white p-2 rounded" %>
-              <% end %>
-            </div>
-          <ul class="flex space-x-4 text-white">
+        <!-- Right side profile, search, and logout -->
+        <div class="flex space-x-4 text-white items-center">
+          <!-- Search Form -->
+          <div>
+            <%= form_with(url: search_quizzes_path, method: :get, local: true, data: { turbo: false }) do |form| %>
+              <%= form.text_field :query, placeholder: "Search quizzes...", class: "rounded p-2 text-black" %>
+              <%= form.submit "Search", class: "bg-gray-700 text-white p-2 rounded" %>
+            <% end %>
+          </div>
+
+          <ul class="flex space-x-4">
             <% if user_signed_in? %>
-              <li><%= link_to 'Profile', user_profile_path, class: "hover:underline" %></li>
+              <li><%= link_to (current_user.username || "Profile"), user_profile_path, class: "hover:underline" %></li>
               
               <li>
                 <%= form_with url: destroy_user_session_path, method: :delete, class: "inline", data: { turbo: false } do %>
@@ -43,10 +48,9 @@
               <li><%= link_to 'Sign Up', new_user_registration_path, class: "hover:underline", data: { turbo: false } %></li>
             <% end %>
           </ul>
-        </turbo-frame>
-
-  </div>
-</nav>
+        </div>
+      </div>
+    </nav>
 
     <div class="container mx-auto px-4 py-8">
       <%= yield %>

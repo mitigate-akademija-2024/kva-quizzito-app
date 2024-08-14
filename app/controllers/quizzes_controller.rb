@@ -1,22 +1,10 @@
 class QuizzesController < ApplicationController
-
+  before_action :authenticate_user!, only: [:my_quizzes]
   before_action :set_quiz, only: %i[show edit update destroy results do_quiz submit_quiz take submit_results quiz_finished confirm_delete]
 
   # GET /quizzes or /quizzes.json
   def index
     @quizzes = Quiz.all  # Retrieve all quizzes, not just those owned by the current user
-  end
-
-  def start
-    @title = 'Start some quiz'
-    @description = 'lorem ipsum'
-
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: { title: @title, description: "Šī ir json atbilde" }
-      end
-    end
   end
 
   # GET /quizzes/1 or /quizzes/1.json
@@ -139,7 +127,7 @@ class QuizzesController < ApplicationController
 
   def search
     if params[:query].present?
-      @quizzes = Quiz.where("title ILIKE ?", "%#{params[:query]}%")
+      @quizzes = Quiz.where("title LIKE ?", "%#{params[:query]}%")
     else
       @quizzes = Quiz.none
     end
