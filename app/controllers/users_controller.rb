@@ -8,6 +8,10 @@ class UsersController < ApplicationController
     @received_feedbacks = Feedback.joins(:quiz).where(quiz: @quizzes)
   end
 
+  def my_quizzes
+    @quizzes = current_user.quizzes
+  end
+
   def my_feedbacks
     @feedbacks = current_user.feedbacks.includes(:quiz)
   end

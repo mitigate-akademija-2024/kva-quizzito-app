@@ -165,9 +165,9 @@ class QuizzesController < ApplicationController
   end
 
   def my_quizzes
-    @quizzes = current_user.quizzes.where(user_id: current_user.id).distinct
+    @quizzes = Quiz.where(user_id: current_user.id).distinct
   end
-  
+
   def search
     if params[:query].present?
       @quizzes = Quiz.where("title LIKE ?", "%#{params[:query]}%")

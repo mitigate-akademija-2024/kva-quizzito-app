@@ -8,30 +8,24 @@
     </p>
   <% end %>
 
-  <% @user_answers.each do |question, selected_answer| %>
-    <div class="mb-6 border-b border-gray-300 pb-4">
-      <p class="text-xl font-medium text-blue-600"><%= question.question_text %></p>
-      <ul class="ml-8">
-        <li class="mt-2 <%= selected_answer.correct ? 'text-green-600' : 'text-red-600' %>">
-          <%= selected_answer.correct ? '✔️' : '❌' %> Your Answer: <%= selected_answer.answer_text %>
-        </li>
-      </ul>
-      <% unless selected_answer.correct %>
-        <p class="text-sm text-gray-600 ml-8">Correct Answer: <%= @correct_answers[question.id].answer_text %></p>
-      <% end %>
-    </div>
-  <% end %>
-
   <!-- Feedback Form -->
-  <h2 class="text-2xl font-semibold mb-4 mt-8">Leave Feedback</h2>
-  <%= form_with(model: [ @quiz, Feedback.new ], local: true) do |form| %>
-    <div class="mb-4">
-      <%= form.text_area :content, rows: 5, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
-    </div>
-    <div>
-      <%= form.submit "Submit Feedback", class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600", data: { turbo: false } %>
-    </div>
+  <% if user_signed_in? %>
+    <h2 class="text-2xl font-semibold mb-4 mt-8">Leave Feedback</h2>
+    <%= form_with(model: [ @quiz, Feedback.new ], local: true) do |form| %>
+      <div class="mb-4">
+        <%= form.text_area :content, rows: 5, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+      <div>
+        <%= form.submit "Submit Feedback", class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600", data: { turbo: false } %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-red-600 font-semibold mb-4">
+      You must be <%= link_to 'logged in', new_user_session_path, class: "text-blue-600 underline" %> to submit feedback.
+    </p>
   <% end %>
 
-  <%= link_to 'Back to Quizzes', quizzes_path, class: "mt-6 block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+    <div class="flex space-x-4 mt-6">
+      <%= link_to "Back to Quizzes", quizzes_path, class: "bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700" %>
+    </div>
 </div>
