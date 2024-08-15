@@ -11,7 +11,9 @@
       </tr>
     </thead>
     <tbody>
-      <%= render partial: 'quiz_row', collection: @quizzes, as: :quiz %>
+      <% @quizzes.each do |quiz| %>
+        <%= render partial: 'quiz_row', locals: { quiz: quiz } %>
+      <% end %>
     </tbody>
   </table>
 

@@ -9,7 +9,14 @@
     <%= quiz.created_at.strftime('%B %d, %Y') %>
   </td>
   <td class="py-2 px-4 text-gray-800 flex items-center space-x-4">
-    <%= link_to 'Take Quiz', take_quiz_path(quiz), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
-    <%= link_to 'Highscores', highscores_quiz_path(quiz), class: "text-blue-500 hover:underline" %>
+    <!-- Check if user has already taken the quiz -->
+    <% if quiz.present? %>
+      <% if current_user.has_score?(quiz) %>
+        <%= link_to 'Completed', take_quiz_path(quiz), class: "bg-green-800 text-white px-4 py-2 rounded hover:bg-green-1000" %> 
+      <% else %>
+        <%= link_to 'Take Quiz', take_quiz_path(quiz), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
+      <% end %>
+    <% end %>  
+    <%= link_to 'Highscores', quiz_highscores_highscore_path(quiz), class: "text-blue-500 hover:underline" %>
   </td>
 </tr>

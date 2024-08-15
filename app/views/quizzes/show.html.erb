@@ -30,43 +30,6 @@
     <% end %>
   </div>
   
-  <!-- Check if user has already taken the quiz -->
-  <% if user_signed_in? %>
-    <% user_score = current_user.user_scores.find_by(quiz: @quiz) %>
-    <% if user_score %>
-      <p class="text-red-600 font-semibold mb-4">
-        You have already taken this quiz. Your score was <%= user_score.score %>.
-      </p>
-    <% else %>
-      <%= link_to 'Take Quiz', take_quiz_path(@quiz), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
-    <% end %>
-  <% else %>
-    <p class="text-blue-600 font-semibold mb-4">
-      Please log in to take this quiz.
-    </p>
-    <%= link_to 'Login', new_user_session_path, class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
-  <% end %>
-
-  <!-- Feedback Form -->
-  <h2 class="text-2xl font-semibold mb-4 mt-8">Leave Feedback</h2>
-  <%= form_with(model: [ @quiz, Feedback.new ], local: true) do |form| %>
-    <div class="mb-4">
-      <%= form.text_area :content, rows: 5, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
-    </div>
-    <div>
-      <%= form.submit "Submit Feedback", class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600", data: { turbo: false } %>
-    </div>
-  <% end %>
-
-  <!-- Display Feedback -->
-  <h2 class="text-2xl font-semibold mb-4 mt-8">Feedback</h2>
-  <% @quiz.feedbacks.each do |feedback| %>
-    <div class="mb-4 p-4 border rounded-md">
-      <p><strong><%= feedback.user.username %>:</strong></p>
-      <p><%= feedback.content %></p>
-    </div>
-  <% end %>
-
   <!-- Action Buttons -->
   <div class="flex space-x-4">
     <%= link_to "Edit this quiz", edit_quiz_path(@quiz), class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" %>

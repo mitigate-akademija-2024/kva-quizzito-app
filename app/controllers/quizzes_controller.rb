@@ -20,6 +20,13 @@ class QuizzesController < ApplicationController
     build_questions_with_answers(@quiz, initialize_if_empty: true)
   end
 
+  def set_quiz
+    @quiz = Quiz.find_by(id: params[:id])
+    if @quiz.nil?
+      redirect_to quizzes_path, alert: 'Quiz not found.'
+    end
+  end
+
   # POST /quizzes or /quizzes.json
   def create
     @quiz = current_user.quizzes.build(quiz_params)
@@ -159,30 +166,9 @@ class QuizzesController < ApplicationController
   end
 
   def my_quizzes
-    @quizzes = current_user.quizzes
+    @quizzes = current_user.quizzes.where(user_id: current_user.id).distinct
   end
   
-  def highscores
-    @highscores = User.joins(:user_scores)
-                      .select('users.*, SUM(user_scores.score) AS total_score')
-                      .group('users.id')
-                      .order('total_score DESC')
-                      .limit(10)
-  end
-  
-  def quiz_highscores
-    @quiz = Quiz.find(params[:id])
-    @highscores = @quiz.scores.joins(:user)
-                             .select('users.username, users.email, scores.score')
-                             .order('scores.score DESC')
-                             .limit(10)
-  
-    respond_to do |format|
-      format.html # Render the quiz_highscores.html.erb view
-      format.csv { send_data generate_csv(@highscores), filename: "quiz-#{@quiz.id}-highscores-#{Date.today}.csv" }
-    end
-  end
-
   def search
     if params[:query].present?
       @quizzes = Quiz.where("title LIKE ?", "%#{params[:query]}%")
@@ -203,23 +189,10 @@ class QuizzesController < ApplicationController
     end
   end
 
-  def export_highscores_csv
-    @quiz = Quiz.find(params[:id])
-    @highscores = @quiz.user_scores.joins(:user).select('users.username, users.email, user_scores.score').order('user_scores.score DESC')
-
-    respond_to do |format|
-      format.csv { send_data generate_csv(@highscores), filename: "quiz-#{@quiz.id}-highscores-#{Date.today}.csv" }
-    end
-  end
-
   private
 
     def check_user_participation
       @user_already_taken_quiz = UserScore.exists?(user: current_user, quiz: @quiz)
-    end
-
-    def feedback_params
-      params.require(:feedback).permit(:content)
     end
 
     # Use callbacks to share common setup or constraints between actions.
@@ -236,6 +209,10 @@ class QuizzesController < ApplicationController
           answers_attributes: [:id, :answer_text, :correct, :_destroy]
         ]
       )
+    end
+
+    def feedback_params
+      params.require(:feedback).permit(:content)
     end
 
     def calculate_score
@@ -261,15 +238,5 @@ class QuizzesController < ApplicationController
         end
       end
     end
-
-    def generate_csv(highscores)
-      CSV.generate(headers: true) do |csv|
-        csv << ['Username', 'Email', 'Score']
   
-        highscores.each do |highscore|
-          csv << [highscore.username || highscore.email, highscore.email, highscore.score]
-        end
-      end
-    end
-    
   end

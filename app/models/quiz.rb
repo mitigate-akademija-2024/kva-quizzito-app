@@ -8,7 +8,7 @@ class Quiz < ApplicationRecord
   has_many :scores, dependent: :destroy
   has_many :questions, dependent: :destroy
   has_many :user_scores, class_name: 'Score', dependent: :destroy
-  has_many :feedbacks
+  has_many :feedbacks, dependent: :destroy
 
 
   belongs_to :user
