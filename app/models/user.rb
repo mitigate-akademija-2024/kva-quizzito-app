@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 
+  has_many :user_scores, -> { order(score: :desc) }
   has_many :scores, dependent: :destroy
   has_many :quizzes, through: :scores
   has_many :feedbacks, dependent: :destroy

@@ -27,9 +27,13 @@ function addRemoveListeners() {
     });
 }
 
+
 function handleRemoveClick(e) {
     e.preventDefault();
-    removeFields(e.currentTarget);
+    const fieldContainer = e.currentTarget.closest('.question-fields') || e.currentTarget.closest('.answer-fields');
+    if (fieldContainer) {
+        fieldContainer.remove();
+    }
 }
 
 function removeFields(link) {
@@ -41,66 +45,67 @@ function removeFields(link) {
 
 function handleAddQuestionClick(e) {
     e.preventDefault();
-    const questionContainer = document.querySelector('#questions');
+    const questionContainer = document.querySelector("#questions");
+    const questionIndex = questionContainer.children.length;
     const newQuestion = questionContainer.children[0].cloneNode(true);
 
-    // Generate a unique timestamp to ensure unique field names
-    const timestamp = new Date().getTime();
-
-    // Clear the values in the cloned fields and update names and IDs
-    newQuestion.querySelectorAll('input[type="text"], textarea').forEach(input => {
-        input.value = '';
-        input.name = updateFieldName(input.name, timestamp);
-        input.id = updateFieldID(input.id, timestamp);
+    // Clear all text and textarea fields
+    newQuestion.querySelectorAll('input[type="text"], textarea').forEach((input) => {
+        input.value = "";
+        input.name = input.name.replace(/\[\d+\]/, `[${questionIndex}]`);
+        input.id = input.id.replace(/_\d+_/, `_${questionIndex}_`);
     });
 
-    newQuestion.querySelectorAll('input[type="checkbox"]').forEach(input => {
+    // Uncheck all checkboxes
+    newQuestion.querySelectorAll('input[type="checkbox"]').forEach((input) => {
         input.checked = false;
-        input.name = updateFieldName(input.name, timestamp);
-        input.id = updateFieldID(input.id, timestamp);
+        input.name = input.name.replace(/\[\d+\]/, `[${questionIndex}]`);
+        input.id = input.id.replace(/_\d+_/, `_${questionIndex}_`);
     });
 
-    // Clear the hidden ID fields (if any)
-    newQuestion.querySelectorAll('input[type="hidden"]').forEach(input => {
+    // Clear hidden ID fields to avoid conflicts
+    newQuestion.querySelectorAll('input[type="hidden"]').forEach((input) => {
         if (input.name.endsWith("[id]")) {
-            input.value = '';  // Clear the ID field
+            input.value = ""; // Clear the hidden ID field
         }
     });
 
-    // Update add-answer buttons and remove-answer buttons
-    newQuestion.querySelectorAll('.add-answer').forEach(button => {
-        button.addEventListener('click', handleAddAnswerClick);
+    // Ensure any add-answer buttons work on the newly cloned question
+    newQuestion.querySelectorAll(".add-answer").forEach((button) => {
+        button.addEventListener("click", handleAddAnswerClick);
     });
 
+    // Append the new question to the container
     questionContainer.appendChild(newQuestion);
 
-    // Rebind remove event to the new remove buttons
+    // Rebind remove listeners to ensure the remove buttons work correctly
     addRemoveListeners();
 }
 
 function handleAddAnswerClick(e) {
     e.preventDefault();
     const answerContainer = e.currentTarget.closest('.question-fields').querySelector('.answers');
+    const answerIndex = answerContainer.children.length;
     const newAnswer = answerContainer.children[0].cloneNode(true);
 
-    // Generate a unique timestamp to ensure unique field names
+    // Generate a unique timestamp to ensure unique field names and IDs
     const timestamp = new Date().getTime();
 
     // Clear the values in the cloned fields and update names and IDs
-    newAnswer.querySelectorAll('input[type="text"]').forEach(input => {
+    newAnswer.querySelectorAll('input[type="text"]').forEach((input) => {
         input.value = '';
-        input.name = updateFieldName(input.name, timestamp);
-        input.id = updateFieldID(input.id, timestamp);
+        input.name = input.name.replace(/\[\d+\]/, `[${answerIndex}]`);
+        input.id = input.id.replace(/_\d+_/, `_${answerIndex}_`);
     });
 
-    newAnswer.querySelectorAll('input[type="checkbox"]').forEach(input => {
+    newAnswer.querySelectorAll('input[type="checkbox"]').forEach((input) => {
         input.checked = false;
-        input.name = updateFieldName(input.name, timestamp);
-        input.id = updateFieldID(input.id, timestamp);
+        input.name = input.name.replace(/\[\d+\]/, `[${answerIndex}]`);
+        input.id = input.id.replace(/_\d+_/, `_${answerIndex}_`);
     });
 
-    // Clear the hidden ID fields (if any)
-    newAnswer.querySelectorAll('input[type="hidden"]').forEach(input => {
+    // Clear the hidden ID fields to avoid conflicts
+    newAnswer.querySelectorAll('input[type="hidden"]').forEach((input) => {
         if (input.name.endsWith("[id]")) {
             input.value = '';  // Clear the ID field
         }
@@ -112,13 +117,7 @@ function handleAddAnswerClick(e) {
     addRemoveListeners();
 }
 
-function updateFieldName(name, timestamp) {
-    return name.replace(/\[\d+\]/g, `[${timestamp}]`);
-}
 
-function updateFieldID(id, timestamp) {
-    return id ? id.replace(/_\d+_/, `_${timestamp}_`) : id;
-}
 
 // Configure Stimulus development experience
 application.debug = false

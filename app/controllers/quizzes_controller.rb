@@ -29,16 +29,15 @@ class QuizzesController < ApplicationController
 
   # POST /quizzes or /quizzes.json
   def create
-    @quiz = current_user.quizzes.build(quiz_params)
-
+      @quiz = Quiz.new(quiz_params.merge(user: current_user))
     if @quiz.save
       redirect_to @quiz, notice: "Quiz was successfully created."
     else
-      build_questions_with_answers(@quiz, initialize_if_empty: false)
+      # Log the validation errors
+      Rails.logger.debug @quiz.errors.full_messages.join(", ")
       render :new, status: :unprocessable_entity
     end
   end
-
 
   # PATCH/PUT /quizzes/1 or /quizzes/1.json
   def update

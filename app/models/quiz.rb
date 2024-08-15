@@ -1,5 +1,9 @@
 class Quiz < ApplicationRecord
+
+  belongs_to :user
+
   validates :title, presence: true, uniqueness: true
+  validates :user, presence: true
   
   before_validation :normalize_title
   before_save :normalize_description
@@ -9,9 +13,6 @@ class Quiz < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_many :user_scores, class_name: 'Score', dependent: :destroy
   has_many :feedbacks, dependent: :destroy
-
-
-  belongs_to :user
 
   accepts_nested_attributes_for :questions, allow_destroy: true
 
