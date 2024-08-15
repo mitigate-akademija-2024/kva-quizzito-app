@@ -16,7 +16,7 @@
         <%= form.text_area :content, rows: 5, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
       </div>
       <div>
-        <%= form.submit "Submit Feedback", class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600", data: { turbo: false } %>
+        <%= form.submit "Submit Feedback", class: "bg-[#274C77] text-white px-4 py-2 rounded hover:bg-blue-600", data: { turbo: false } %>
       </div>
     <% end %>
   <% else %>
@@ -26,6 +26,6 @@
   <% end %>
 
     <div class="flex space-x-4 mt-6">
-      <%= link_to "Back to Quizzes", quizzes_path, class: "bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700" %>
+      <%= link_to "Back to Quizzes", quizzes_path, class: "bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700" %>
     </div>
 </div>

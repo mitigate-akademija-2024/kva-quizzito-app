@@ -40,11 +40,11 @@
 
   <!-- Add More Questions Button -->
   <div class="mt-4">
-    <%= link_to "Add Question", '#', id: "add-question", class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+    <%= link_to "Add Question", '#', id: "add-question", class: "bg-[#274C77] text-white px-4 py-2 rounded" %>
   </div>
 
   <!-- Submit Button (Create/Save Quiz) -->
   <div class="mt-6">
-    <%= form.submit @quiz.new_record? ? "Create Quiz" : "Save Changes", class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+    <%= form.submit @quiz.new_record? ? "Create Quiz" : "Save Changes", class: "bg-[#274C77] text-white px-4 py-2 rounded" %>
   </div>
 <% end %>
