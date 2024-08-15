@@ -1,19 +1,20 @@
 <div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
-  <h1 class="text-4xl font-bold mb-8 text-center"><%= @quiz.title %> - Highscores</h1>
-  <%= link_to 'Export as CSV', export_quiz_highscores_csv_highscore_path(@quiz, format: :csv), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" %>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+  <h1 class="text-3xl font-bold mb-4 text-center"><%= @quiz.title %> - Highscores</h1>
+  <%= link_to 'Export as CSV', export_quiz_highscores_csv_highscore_path(@quiz, format: :csv), class: "bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4 inline-block" %>
+  
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="min-w-full bg-white">
+      <thead class="bg-gray-800 text-white">
         <tr>
-          <th>User</th>
-          <th>Score</th>
+          <th class="py-2 px-4 text-left">User</th>
+          <th class="py-2 px-4 text-left">Score</th>
         </tr>
       </thead>
       <tbody>
         <% @highscores.each do |entry| %>
-          <tr>
-            <td><%= entry.username || entry.email %></td>
-            <td><%= entry.score %></td>
+          <tr class="border-b">
+            <td class="py-2 px-4 text-gray-800"><%= entry.username || entry.email %></td>
+            <td class="py-2 px-4 text-gray-800"><%= entry.score %></td>
           </tr>
         <% end %>
       </tbody>

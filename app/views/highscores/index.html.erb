@@ -1,18 +1,19 @@
 <div class="container mx-auto px-4 py-8 max-w-4xl mt-16">
-  <h1 class="text-4xl font-bold mb-8 text-center">Top 10 Users by Total Score</h1>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+  <h1 class="text-3xl font-bold mb-4 text-center">Top 10 Users by Total Score</h1>
+  
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="min-w-full bg-white">
+      <thead class="bg-gray-800 text-white">
         <tr>
-          <th>User</th>
-          <th>Total Score</th>
+          <th class="py-2 px-4 text-left">User</th>
+          <th class="py-2 px-4 text-left">Total Score</th>
         </tr>
       </thead>
       <tbody>
         <% @top_users.each do |user| %>
-          <tr>
-            <td><%= user.username || user.email %></td>
-            <td><%= user.total_score %></td>
+          <tr class="border-b">
+            <td class="py-2 px-4 text-gray-800"><%= user.username || user.email %></td>
+            <td class="py-2 px-4 text-gray-800"><%= user.total_score %></td>
           </tr>
         <% end %>
       </tbody>

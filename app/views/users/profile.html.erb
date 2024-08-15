@@ -8,7 +8,7 @@
     <p><strong>Email:</strong> <%= @user.email %></p>
         <%= form_with model: @user, url: user_registration_path, local: true do |f| %>
           <div class="actions">
-            <%= f.submit "Update Profile", data: { turbo: false } %>
+            <%= f.submit "Edit Profile", data: { turbo: false } %>
           </div>
         <% end %>
   </div>
@@ -25,7 +25,7 @@
       <p>You haven't created any quizzes yet.</p>
     <% end %>
   </div>
-
+  
   <div class="bg-white p-6 rounded-lg shadow-lg mt-8">
     <h2 class="text-2xl font-semibold mb-4">Feedback Received</h2>
     <% if @received_feedbacks.any? %>
